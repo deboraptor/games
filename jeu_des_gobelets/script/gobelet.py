@@ -15,13 +15,13 @@ class JeuDesGobelets:
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
         self.images = [
-            tk.PhotoImage(file="gobelet.png"),
-            tk.PhotoImage(file="gobelet.png"),
-            tk.PhotoImage(file="gobelet.png")
+            tk.PhotoImage(file="../img/gobelet.png"),
+            tk.PhotoImage(file="../img/gobelet.png"),
+            tk.PhotoImage(file="../img/gobelet.png")
         ]
 
-        self.image_etoile = tk.PhotoImage(file="etoile.png")
-        self.image_gobelet_renverse = tk.PhotoImage(file="gobelet_renverse.png")
+        self.image_etoile = tk.PhotoImage(file="../img/etoile.png")
+        self.image_gobelet_renverse = tk.PhotoImage(file="../img/gobelet_renverse.png")
 
         self.gobelet_ids = [
             self.canvas.create_image(0, 0, image=self.images[0], tags="gobelet1"),

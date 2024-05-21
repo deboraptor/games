@@ -1,70 +1,88 @@
-import tkinter as tk
-from tkinter import messagebox
+import pygame
 import random
 
 
-class JeuDesGobelets:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Jeu des Trois Gobelets")
+pygame.init()
 
-        self.gobelets = ["Vide", "Vide", "Objet"]
-        random.shuffle(self.gobelets)
+largeur_fenetre = 800
+hauteur_fenetre = 600
+fenetre = pygame.display.set_mode((largeur_fenetre, hauteur_fenetre))
+pygame.display.set_caption("Jeu des Trois Gobelets")
 
-        self.canvas = tk.Canvas(self.root, width=800, height=600, bg="white")
-        self.canvas.pack(fill=tk.BOTH, expand=True)
+BLANC = (255, 255, 255)
+NOIR = (0, 0, 0)
 
-        self.images = [
-            tk.PhotoImage(file="../img/gobelet.png"),
-            tk.PhotoImage(file="../img/gobelet.png"),
-            tk.PhotoImage(file="../img/gobelet.png")
-        ]
+image_gobelet = pygame.image.load("../img/gobelet.png")
+image_etoile = pygame.image.load("../img/etoile.png")
+image_gobelet_renverse = pygame.image.load("../img/gobelet_renverse.png")
 
-        self.image_etoile = tk.PhotoImage(file="../img/etoile.png")
-        self.image_gobelet_renverse = tk.PhotoImage(file="../img/gobelet_renverse.png")
+largeur_gobelet = image_gobelet.get_width()
+hauteur_gobelet = image_gobelet.get_height()
 
-        self.gobelet_ids = [
-            self.canvas.create_image(0, 0, image=self.images[0], tags="gobelet1"),
-            self.canvas.create_image(0, 0, image=self.images[1], tags="gobelet2"),
-            self.canvas.create_image(0, 0, image=self.images[2], tags="gobelet3")
-        ]
+positions = [
+    (largeur_fenetre // 4 - largeur_gobelet // 2, hauteur_fenetre // 2 - hauteur_gobelet // 2),
+    (largeur_fenetre // 2 - largeur_gobelet // 2, hauteur_fenetre // 2 - hauteur_gobelet // 2),
+    (3 * largeur_fenetre // 4 - largeur_gobelet // 2, hauteur_fenetre // 2 - hauteur_gobelet // 2)
+]
 
-        self.canvas.tag_bind("gobelet1", "<Button-1>", lambda e: self.reveal(0))
-        self.canvas.tag_bind("gobelet2", "<Button-1>", lambda e: self.reveal(1))
-        self.canvas.tag_bind("gobelet3", "<Button-1>", lambda e: self.reveal(2))
+gobelets = ["Vide", "Vide", "Objet"]
+random.shuffle(gobelets)
 
-        self.canvas.bind("<Configure>", self.on_resize)
-        self.on_resize(None)
+def dessiner_gobelets():
+    fenetre.fill(BLANC)
+    for i in range(3):
+        fenetre.blit(image_gobelet, positions[i])
+    pygame.display.flip()
 
-    def on_resize(self, event):
-        canvas_width = self.canvas.winfo_width()
-        canvas_height = self.canvas.winfo_height()
+def animer_melange():
+    for _ in range(10):
+        random.shuffle(positions)
+        dessiner_gobelets()
+        pygame.time.delay(500)
 
-        x_coords = [canvas_width // 4, canvas_width // 2, 3 * canvas_width // 4]
-        y_coord = canvas_height // 2
+def reset_game():
+    random.shuffle(gobelets)
+    dessiner_gobelets()
 
-        self.canvas.coords(self.gobelet_ids[0], x_coords[0], y_coord)
-        self.canvas.coords(self.gobelet_ids[1], x_coords[1], y_coord)
-        self.canvas.coords(self.gobelet_ids[2], x_coords[2], y_coord)
+def afficher_victoire():
+    font = pygame.font.Font(None, 74)
+    text = font.render("Félicitations !", True, NOIR)
+    fenetre.fill(BLANC)
+    fenetre.blit(text, (largeur_fenetre // 4, hauteur_fenetre // 2 - 50))
+    pygame.display.flip()
+    pygame.time.delay(2000)
 
-    def reveal(self, index):
-        if self.gobelets[index] == "Objet":
-            self.canvas.itemconfig(self.gobelet_ids[index], image=self.image_etoile)
-            messagebox.showinfo("Félicitations !", "Vous avez trouvé l'objet !")
-        else:
-            self.canvas.itemconfig(self.gobelet_ids[index], image=self.image_gobelet_renverse)
-            messagebox.showinfo("Dommage !", "Vous n'avez pas trouvé l'objet.")
-        self.reset_game()  
+def afficher_defaite():
+    font = pygame.font.Font(None, 74)
+    text = font.render("Dommage !", True, NOIR)
+    fenetre.fill(BLANC)
+    fenetre.blit(text, (largeur_fenetre // 3, hauteur_fenetre // 2 - 50))
+    pygame.display.flip()
+    pygame.time.delay(2000)
 
-    def reset_game(self):
-        random.shuffle(self.gobelets)
-        for i in range(3):
-            self.canvas.itemconfig(self.gobelet_ids[i], image=self.images[i])
-        self.canvas.tag_bind("gobelet1", "<Button-1>", lambda e: self.reveal(0))
-        self.canvas.tag_bind("gobelet2", "<Button-1>", lambda e: self.reveal(1))
-        self.canvas.tag_bind("gobelet3", "<Button-1>", lambda e: self.reveal(2))
+reset_game()
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = JeuDesGobelets(root)
-    root.mainloop()
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = event.pos
+            for i in range(3):
+                rect = pygame.Rect(positions[i][0], positions[i][1], largeur_gobelet, hauteur_gobelet)
+                if rect.collidepoint(x, y):
+                    if gobelets[i] == "Objet":
+                        fenetre.blit(image_etoile, positions[i])
+                        pygame.display.flip()
+                        pygame.time.delay(1000)
+                        afficher_victoire()
+                    else:
+                        fenetre.blit(image_gobelet_renverse, positions[i])
+                        pygame.display.flip()
+                        pygame.time.delay(1000)
+                        afficher_defaite()
+                    animer_melange()
+                    reset_game()
+
+pygame.quit()

@@ -1,12 +1,9 @@
 import sys
 import pygame
 import random
-
 import tkinter as tk
-
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, VIDEORESIZE
 from tkinter import messagebox
-
 
 pygame.init()
 
@@ -28,6 +25,7 @@ sounds = [
     pygame.mixer.Sound("../music/ballon_2.mp3"),
     pygame.mixer.Sound("../music/ballon_3.mp3"),
 ]
+lose_sound = pygame.mixer.Sound("../music/lose.mp3")
 
 button_color = pygame.Color("deeppink2")
 button_rect = pygame.Rect(width // 2 - 50, height // 2 - 25, 100, 50)
@@ -99,6 +97,7 @@ while True:
         if ballrect.top < 0:
             speed[1] = -speed[1]
         if ballrect.bottom > height:
+            lose_sound.play()  
             show_messagebox()
 
     screen.blit(pygame.transform.scale(plage, (width, height)), (0, 0))

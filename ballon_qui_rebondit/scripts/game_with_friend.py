@@ -32,6 +32,7 @@ button_color = pygame.Color("deeppink2")
 button_rect = pygame.Rect(width // 2 - 50, height // 2 - 25, 100, 50)
 font = pygame.font.Font(None, 36)
 countdown_font = pygame.font.Font(None, 120)
+rules_font = pygame.font.Font(None, 48)
 button_text = font.render("Stop", True, (255, 255, 255))
 button_text_rect = button_text.get_rect(center=button_rect.center)
 
@@ -43,18 +44,24 @@ player_width = 100
 player_height = 20
 player_speed = 10
 
-player1 = pygame.Rect(width // 2 - player_width // 2, height - 40, player_width, player_height)
+player1 = pygame.Rect(
+    width // 2 - player_width // 2, height - 40, player_width, player_height
+)
 player2 = pygame.Rect(width // 2 - player_width // 2, 20, player_width, player_height)
 
+
 def resize_elements():
-    global button_rect, button_text_rect
+    global button_rect, button_text_rect, width, height
     button_rect = pygame.Rect(width // 2 - 50, height // 2 - 25, 100, 50)
     button_text_rect = button_text.get_rect(center=button_rect.center)
+
 
 def distance(point1, point2):
     return ((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2) ** 0.5
 
+
 resize_elements()
+
 
 def show_messagebox(message, win=False):
     root = tk.Tk()
@@ -70,6 +77,57 @@ def show_messagebox(message, win=False):
         pygame.quit()
         sys.exit()
 
+
+def show_rules():
+    global width, height, screen, game_started
+    rules = [
+        "Règles du Jeu :",
+        "Le joueur 1 (en bas) utilise les flèches pour déplacer sa raquette.",
+        "Le joureur 2 (en haut) utilise la souris pour déplacer sa raquette.",
+        "Ne laissez pas la balle toucher votre zone !",
+        "Le joueur qui laisse tomber la balle perd.",
+        "Cliquez pour commencer...",
+    ]
+    rules_surface = pygame.Surface((width, height))
+    rules_surface.set_alpha(230)
+    rules_surface.fill("lightpink")
+    screen.blit(rules_surface, (0, 0))
+
+    y_offset = 100
+    for rule in rules:
+        rule_text = rules_font.render(rule, True, (255, 255, 255))
+        rule_rect = rule_text.get_rect(center=(width // 2, y_offset))
+        screen.blit(rule_text, rule_rect)
+        y_offset += 60
+    pygame.display.flip()
+
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == MOUSEBUTTONDOWN:
+                waiting = False
+                game_started = True
+                reset_game()
+            elif event.type == VIDEORESIZE:
+                size = width, height = event.w, event.h
+                screen = pygame.display.set_mode(size, pygame.RESIZABLE)
+                resize_elements()
+                rules_surface = pygame.Surface((width, height))
+                rules_surface.set_alpha(230)
+                rules_surface.fill("lightpink")
+                screen.blit(rules_surface, (0, 0))
+                y_offset = 100
+                for rule in rules:
+                    rule_text = rules_font.render(rule, True, (255, 255, 255))
+                    rule_rect = rule_text.get_rect(center=(width // 2, y_offset))
+                    screen.blit(rule_text, rule_rect)
+                    y_offset += 60
+                pygame.display.flip()
+
+
 def reset_game():
     global ballrect, speed, game_started, countdown_start
     ballrect.center = (width // 2, height // 2)
@@ -77,23 +135,28 @@ def reset_game():
     game_started = False
     countdown_start = pygame.time.get_ticks()
 
+
 def move_ball():
     global ballrect, speed
     ballrect = ballrect.move(speed)
     if ballrect.left < 0 or ballrect.right > width:
         speed[0] = -speed[0]
     if ballrect.top < 0:
-        show_messagebox("Player 1 wins!", win=True)
+        show_messagebox("Le joueur 1 gagne !", win=True)
     if ballrect.bottom > height:
-        show_messagebox("Player 2 wins!")
+        show_messagebox("Le joueur 2 gagne !")
+
 
 def check_collision():
     global speed
     if ballrect.colliderect(player1) or ballrect.colliderect(player2):
         speed[1] = -speed[1]
 
+
 game_started = False
 countdown_start = pygame.time.get_ticks()
+
+show_rules()
 
 while True:
     for event in pygame.event.get():

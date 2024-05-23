@@ -2,15 +2,17 @@ import tkinter as tk
 import subprocess
 import sys
 from PIL import Image, ImageTk
+from tkinter import messagebox
+
 import pygame
 
 pygame.init()
 
-def launch_bouncing_balloon():
-    subprocess.Popen([sys.executable, "bouncing_balloon.py"])
+def launch_game_with_ai():
+    subprocess.Popen([sys.executable, "game_with_ai.py"])
 
-def yeepee():
-    pygame.mixer.Sound("../music/yeepee.mp3").play()
+def launch_game_with_friend():
+    subprocess.Popen([sys.executable, "game_with_friend.py"])
 
 root = tk.Tk()
 root.title("Menu Principal")
@@ -35,10 +37,11 @@ def create_round_button(canvas, x, y, radius, text, command):
 
 background_item = canvas.create_image(0, 0, image=background_photo, anchor="nw")
 
-button_spacing = 120 
+button_spacing = 100 
+center_y = background_image.height // 2
 
-create_round_button(canvas, background_image.width // 2, background_image.height // 2 - button_spacing, 50, "Lancer le jeu", launch_bouncing_balloon)
-create_round_button(canvas, background_image.width // 2, background_image.height // 2, 50, "Quitter", root.quit)
-create_round_button(canvas, background_image.width // 2, background_image.height // 2 + button_spacing, 50, "Yeepee", yeepee)
+create_round_button(canvas, background_image.width // 2, center_y - button_spacing, 50, "IA", launch_game_with_ai)
+create_round_button(canvas, background_image.width // 2, center_y, 50, "Ami", launch_game_with_friend)
+create_round_button(canvas, background_image.width // 2, center_y + button_spacing, 50, "Quitter", root.quit)
 
 root.mainloop()

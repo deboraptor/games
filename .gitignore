@@ -1,0 +1,15 @@
+renpy-8.2.1-sdk/renpy*/*
+renpy-8.2.1-sdk/doc/*
+renpy-8.2.1-sdk/gui/*
+renpy-8.2.1-sdk/launcher/*
+renpy-8.2.1-sdk/lib/*
+renpy-8.2.1-sdk/module/*
+renpy-8.2.1-sdk/tmp/*
+renpy-8.2.1-sdk/sdk/*
+renpy-8.2.1-sdk/tutorial/*
+renpy-8.2.1-sdk/update/*
+renpy-8.2.1-sdk/the_question/*
+renpy-8.2.1-sdk/renpy*
+renpy-8.2.1-sdk/LICENCE*
+renpy-8.2.1-sdk/log*
+

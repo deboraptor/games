@@ -1,5 +1,5 @@
 # Jeux
-## :construction: Le jeu des gobelets :construction:
+## :construction: Le jeu des gobelets :construction:
 Le jeu des gobelets est un jeu où on doit trouver où est caché l'objet. Le joueur voit au tout début où est placé l'objet et dois essayer de suivre des yeux le mouvement des gobelets pour gagner.
 
 ## Le jeu du ballon (béta)
